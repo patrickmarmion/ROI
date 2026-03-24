@@ -5,7 +5,7 @@ export default function App() {
   const [submitted, setSubmitted] = useState(false)
 
   useEffect(() => {
-    const es = new EventSource('http://localhost:5000/api/events')
+    const es = new EventSource('https://roi-api.cub.pandadoc.cc/api/events')
     es.addEventListener('redirect', () => setSubmitted(true))
     return () => es.close()
   }, [])
