@@ -3,7 +3,7 @@ import cors from 'cors'
 import { createHmac, timingSafeEqual } from 'crypto'
 
 const app = express()
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT
 const SHARED_KEY = process.env.SHARED_KEY
 
 // SSE client for the single connected frontend
@@ -38,10 +38,10 @@ app.get('/api/events', (req, res) => {
   req.on('close', () => { sseClient = null })
 })
 
-// PandaDoc webhook: https://yourdomain.com/webhook-handler/?signature={signature}
+
 app.post('/webhook-handler/', (req, res) => {
   const receivedSignature = req.query.signature
-
+  console.log('Webhook request received')
   if (!receivedSignature) {
     return res.status(400).json({ error: 'Missing signature' })
   }
@@ -63,7 +63,7 @@ app.post('/webhook-handler/', (req, res) => {
     return res.status(401).json({ error: 'Signature verification failed' })
   }
 
-  console.log('Webhook request received')
+  
   if (sseClient) {
     sseClient.write('event: redirect\ndata: {}\n\n')
   }
