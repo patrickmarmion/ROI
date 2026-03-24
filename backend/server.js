@@ -6,8 +6,8 @@ const app = express()
 const PORT = process.env.PORT || 5000
 const SHARED_KEY = process.env.SHARED_KEY
 
-// SSE clients waiting for redirect signal
-const sseClients = new Set()
+// SSE client for the single connected frontend
+let sseClient = null
 
 app.use(cors())
 
@@ -34,8 +34,8 @@ app.get('/api/events', (req, res) => {
   })
   res.flushHeaders()
 
-  sseClients.add(res)
-  req.on('close', () => sseClients.delete(res))
+  sseClient = res
+  req.on('close', () => { sseClient = null })
 })
 
 // PandaDoc webhook: https://yourdomain.com/webhook-handler/?signature={signature}
@@ -63,14 +63,14 @@ app.post('/webhook-handler/', (req, res) => {
     return res.status(401).json({ error: 'Signature verification failed' })
   }
 
-  // Notify all connected frontend clients to redirect
-  for (const client of sseClients) {
-    client.write('event: redirect\ndata: {}\n\n')
+  console.log('Webhook request received')
+  if (sseClient) {
+    sseClient.write('event: redirect\ndata: {}\n\n')
   }
 
   res.status(200).json({ received: true })
 })
 
 app.listen(PORT, () => {
-  console.log(`ROI backend running on http://localhost:${PORT}`)
+  console.log(`ROI backend running on port ${PORT}`)
 })
