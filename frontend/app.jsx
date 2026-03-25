@@ -11,7 +11,12 @@ export default function App() {
   }, [])
 
   if (submitted) {
-    return <div style={{ width: '100vw', height: '100vh', background: '#fff' }} />
+    return (
+      <div className="compiling-page">
+        <div className="spinner" />
+        <p className="compiling-text">Your results are being compiled...</p>
+      </div>
+    )
   }
 
   return (
