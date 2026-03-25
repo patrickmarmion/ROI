@@ -46,10 +46,16 @@ app.post('/webhook-handler', (req, res) => {
     return res.status(400).json({ error: 'Missing signature' })
   }
 
+  console.log('SHARED_KEY set:', !!SHARED_KEY)
+  console.log('Received signature length:', receivedSignature.length)
+  console.log('Raw body length:', req.rawBody?.length)
+
   try {
     const hmac = createHmac('sha256', SHARED_KEY)
     hmac.update(req.rawBody)
     const expectedSignature = hmac.digest('hex')
+
+    console.log('Expected signature length:', expectedSignature.length)
 
     const valid = timingSafeEqual(
       Buffer.from(expectedSignature, 'hex'),
@@ -59,7 +65,8 @@ app.post('/webhook-handler', (req, res) => {
     if (!valid) {
       return res.status(401).json({ error: 'Invalid signature' })
     }
-  } catch {
+  } catch (err) {
+    console.log('Verification error:', err.message)
     return res.status(401).json({ error: 'Signature verification failed' })
   }
 
