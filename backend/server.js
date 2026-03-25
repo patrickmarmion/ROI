@@ -13,7 +13,6 @@ app.use(cors())
 
 // Capture raw body for webhook signature verification before JSON parsing
 app.use((req, res, next) => {
-  console.log('Webhook hit received, in use function')
   if (req.path === '/webhook-handler') {
     let raw = ''
     req.on('data', chunk => { raw += chunk })
