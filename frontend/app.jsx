@@ -1,6 +1,26 @@
 import { useEffect, useState } from 'react'
 import './app.css'
 
+function CompilingPage() {
+  const [done, setDone] = useState(false)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDone(true), 4000)
+    return () => clearTimeout(timer)
+  }, [])
+
+  if (done) {
+    return <div style={{ width: '100vw', height: '100vh', background: '#fff' }} />
+  }
+
+  return (
+    <div className="compiling-page">
+      <div className="spinner" />
+      <p className="compiling-text">Your results are being compiled...</p>
+    </div>
+  )
+}
+
 export default function App() {
   const [submitted, setSubmitted] = useState(false)
 
@@ -11,12 +31,7 @@ export default function App() {
   }, [])
 
   if (submitted) {
-    return (
-      <div className="compiling-page">
-        <div className="spinner" />
-        <p className="compiling-text">Your results are being compiled...</p>
-      </div>
-    )
+    return <CompilingPage />
   }
 
   return (
