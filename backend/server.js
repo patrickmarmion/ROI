@@ -3,7 +3,7 @@ import cors from 'cors'
 import { createHmac, timingSafeEqual } from 'crypto'
 
 const app = express()
-const PORT = process.env.PORT || 8080
+const PORT = process.env.PORT || 3002
 const SHARED_KEY = process.env.SHARED_KEY
 
 // SSE client for the single connected frontend
@@ -14,7 +14,7 @@ app.use(cors())
 // Capture raw body for webhook signature verification before JSON parsing
 app.use((req, res, next) => {
   console.log('Webhook hit received, in use function')
-  if (req.path === '/webhook-handler/') {
+  if (req.path === '/webhook-handler') {
     let raw = ''
     req.on('data', chunk => { raw += chunk })
     req.on('end', () => {
@@ -40,7 +40,7 @@ app.get('/api/events', (req, res) => {
 })
 
 
-app.post('/webhook-handler/', (req, res) => {
+app.post('/webhook-handler', (req, res) => {
   console.log('Webhook hit received')
   const receivedSignature = req.query.signature
   if (!receivedSignature) {
