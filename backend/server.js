@@ -3,7 +3,7 @@ import cors from 'cors'
 import { createHmac, timingSafeEqual } from 'crypto'
 
 const app = express()
-const PORT = process.env.PORT
+const PORT = process.env.PORT || 8080
 const SHARED_KEY = process.env.SHARED_KEY
 
 // SSE client for the single connected frontend
