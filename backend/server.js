@@ -63,8 +63,12 @@ app.post('/webhook-handler/', (req, res) => {
     return res.status(401).json({ error: 'Signature verification failed' })
   }
 
-  
-  if (sseClient) {
+  const body = JSON.parse(req.rawBody)
+  const events = Array.isArray(body) ? body : [body]
+  const shouldRedirect = events.some(e => e.event === 'document_state_changed')
+
+  if (shouldRedirect && sseClient) {
+    console.log('Webhook request received')
     sseClient.write('event: redirect\ndata: {}\n\n')
   }
 
