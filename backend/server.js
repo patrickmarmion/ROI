@@ -40,8 +40,8 @@ app.get('/api/events', (req, res) => {
 
 
 app.post('/webhook-handler/', (req, res) => {
+  console.log('Webhook hit received')
   const receivedSignature = req.query.signature
-  console.log('Webhook request received')
   if (!receivedSignature) {
     return res.status(400).json({ error: 'Missing signature' })
   }
