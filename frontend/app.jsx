@@ -2,27 +2,31 @@ import { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import './app.css'
 
-function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1 }) {
+function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1, closeRate = 0, avgOrderValue = 0 }) {
   const timeSaved = minsWithout - minsWith
   const timeSavedPerMonth = timeSaved * quotesPerMonth
   const timeSavedPerMemberPerMonth = teamMembers > 0 ? Math.round(timeSavedPerMonth / teamMembers) : 0
   const annualTeamHours = Math.round((minsWithout * quotesPerMonth * 12) / 60)
+  const monthlyRevenue = Math.round((closeRate / 100) * quotesPerMonth * avgOrderValue)
   const data = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   return (
     <div className="dashboard">
       <h1 className="dashboard-title">Your ROI with PandaDoc</h1>
       <div className="dashboard-stat">
-        You save <span>{timeSaved} minutes</span> per document
+        Your team currently spends <span>{annualTeamHours} hours</span> per year on quoting
+      </div>
+      <div className="dashboard-stat">
+        Current monthly revenue from quoting: <span>${monthlyRevenue.toLocaleString()}</span>
+      </div>
+      <div className="dashboard-stat">
+        You would save <span>{timeSaved} minutes</span> per document
       </div>
       <div className="dashboard-stat">
         That's <span>{timeSavedPerMonth} minutes</span> saved per month
       </div>
       <div className="dashboard-stat">
-        <span>{timeSavedPerMemberPerMonth} minutes</span> saved per team member per month
-      </div>
-      <div className="dashboard-stat">
-        Your team currently spends <span>{annualTeamHours} hours</span> per year on quoting
+        That's <span>{timeSavedPerMemberPerMonth} minutes</span> saved per team member per month
       </div>
       <BarChart width={480} height={320} data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -41,6 +45,8 @@ const SLIDER_CONFIG = [
   { key: 'Num_TimeToCreateWithPandaDoc', label: 'Mins to create a doc with PandaDoc', min: 1, max: 120 },
   { key: 'Num_QuotesPerMonth',           label: 'Quotes per month', min: 1, max: 1000 },
   { key: 'Num_TeamMembers',              label: 'Team members', min: 1, max: 500 },
+  { key: 'PCT_CloseRate',                label: 'Close rate (%)', min: 1, max: 100 },
+  { key: 'Num_AvgOrderValue',            label: 'Average order value ($)', min: 1, max: 100000 },
 ]
 
 function FilterPanel({ filters, onSave }) {
@@ -86,6 +92,8 @@ function DashboardPage({ nums }) {
     Num_TimeToCreateWithPandaDoc: nums.Num_TimeToCreateWithPandaDoc || 5,
     Num_QuotesPerMonth:           nums.Num_QuotesPerMonth           || 0,
     Num_TeamMembers:              nums.Num_TeamMembers              || 1,
+    PCT_CloseRate:                nums.PCT_CloseRate                || 0,
+    Num_AvgOrderValue:            nums.Num_AvgOrderValue            || 0,
   })
 
   return (
@@ -96,6 +104,8 @@ function DashboardPage({ nums }) {
         minsWith={filters.Num_TimeToCreateWithPandaDoc}
         quotesPerMonth={filters.Num_QuotesPerMonth}
         teamMembers={filters.Num_TeamMembers}
+        closeRate={filters.PCT_CloseRate}
+        avgOrderValue={filters.Num_AvgOrderValue}
       />
     </div>
   )
@@ -111,7 +121,7 @@ function CompilingPage({ tokens }) {
 
   if (done) {
     const nums = Object.fromEntries(
-      Object.entries(tokens).map(([k, v]) => [k, k.startsWith('Num_') ? Number(v) : v])
+      Object.entries(tokens).map(([k, v]) => [k, k.startsWith('Num_') || k.startsWith('PCT_') ? Number(v) : v])
     )
     return <DashboardPage nums={nums} />
   }
