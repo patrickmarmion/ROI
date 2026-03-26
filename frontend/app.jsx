@@ -6,6 +6,7 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
   const timeSaved = minsWithout - minsWith
   const timeSavedPerMonth = timeSaved * quotesPerMonth
   const timeSavedPerMemberPerMonth = teamMembers > 0 ? Math.round(timeSavedPerMonth / teamMembers) : 0
+  const annualTeamHours = Math.round((minsWithout * quotesPerMonth * 12) / 60)
   const data = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   return (
@@ -19,6 +20,9 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
       </div>
       <div className="dashboard-stat">
         <span>{timeSavedPerMemberPerMonth} minutes</span> saved per team member per month
+      </div>
+      <div className="dashboard-stat">
+        Your team currently spends <span>{annualTeamHours} hours</span> per year on quoting
       </div>
       <BarChart width={480} height={320} data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
