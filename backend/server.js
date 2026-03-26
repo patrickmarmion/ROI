@@ -137,7 +137,7 @@ app.post('/api/create-document', async (_req, res) => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        message: 'Hello!',
+        message: 'Hello детка!',
         subject: 'Please find our more ROI info',
       }),
     })
