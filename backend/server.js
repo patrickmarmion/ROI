@@ -9,6 +9,7 @@ const PANDADOC_API_KEY = process.env.PANDADOC_API_KEY
 
 // SSE client for the single connected frontend
 let sseClient = null
+let lastRecipient = null
 
 app.use(cors())
 
@@ -79,6 +80,12 @@ app.post('/webhook-handler', (req, res) => {
     console.log('Webhook request received')
     const tokens = stateChanged.data?.tokens ?? []
     const tokenMap = Object.assign({}, ...tokens)
+
+    const r = stateChanged.data?.recipients?.[0]
+    if (r) {
+      lastRecipient = { email: r.email, first_name: r.first_name, last_name: r.last_name, role: 'Client' }
+    }
+
     sseClient.write(`event: redirect\ndata: ${JSON.stringify(tokenMap)}\n\n`)
   }
 
@@ -97,7 +104,7 @@ app.post('/api/create-document', async (_req, res) => {
       body: JSON.stringify({
         name: 'ROI',
         template_uuid: 'pNVzpQpSnZezkqy7paJFmH',
-        recipients: [],
+        recipients: lastRecipient ? [lastRecipient] : [],
       }),
     })
     const doc = await createRes.json()
