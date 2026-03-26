@@ -8,6 +8,7 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
   const timeSavedPerMemberPerMonth = teamMembers > 0 ? Math.round(timeSavedPerMonth / teamMembers) : 0
   const annualTeamHours = Math.round((minsWithout * quotesPerMonth * 12) / 60)
   const monthlyRevenue = Math.round((closeRate / 100) * quotesPerMonth * avgOrderValue)
+  const projectedWinRate = Math.min(closeRate + (closeRate < 35 ? 15 : 10), 100)
   const data = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   return (
@@ -18,6 +19,9 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
       </div>
       <div className="dashboard-stat">
         Current monthly revenue from quoting: <span>${monthlyRevenue.toLocaleString()}</span>
+      </div>
+      <div className="dashboard-stat">
+        Projected win rate with PandaDoc: <span>{projectedWinRate}%</span>
       </div>
       <div className="dashboard-stat">
         You would save <span>{timeSaved} minutes</span> per document
