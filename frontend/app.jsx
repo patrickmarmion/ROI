@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import './app.css'
 
-function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0 }) {
+function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1 }) {
   const timeSaved = minsWithout - minsWith
   const timeSavedPerMonth = timeSaved * quotesPerMonth
+  const timeSavedPerMemberPerMonth = teamMembers > 0 ? Math.round(timeSavedPerMonth / teamMembers) : 0
   const data = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   return (
@@ -15,6 +16,9 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0 }) {
       </div>
       <div className="dashboard-stat">
         That's <span>{timeSavedPerMonth} minutes</span> saved per month
+      </div>
+      <div className="dashboard-stat">
+        <span>{timeSavedPerMemberPerMonth} minutes</span> saved per team member per month
       </div>
       <BarChart width={480} height={320} data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -45,6 +49,7 @@ function CompilingPage({ tokens }) {
         minsWithout={nums.Num_CurrentTimeToCreate || 0}
         minsWith={nums.Num_TimeToCreateWithPandaDoc || 5}
         quotesPerMonth={nums.Num_QuotesPerMonth || 0}
+        teamMembers={nums.Num_TeamMembers || 1}
       />
     )
   }
