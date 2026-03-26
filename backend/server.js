@@ -87,7 +87,8 @@ app.post('/webhook-handler', (req, res) => {
 
 app.post('/api/create-document', async (_req, res) => {
   try {
-    const response = await fetch('https://api.pandadoc.com/public/v1/documents', {
+    // Create document
+    const createRes = await fetch('https://api.pandadoc.com/public/v1/documents', {
       method: 'POST',
       headers: {
         'Authorization': `API-Key ${PANDADOC_API_KEY}`,
@@ -99,10 +100,44 @@ app.post('/api/create-document', async (_req, res) => {
         recipients: [],
       }),
     })
-    const data = await response.json()
-    res.status(response.status).json(data)
+    const doc = await createRes.json()
+    const id = doc.id
+
+    // Poll until status changes from document.uploaded to document.draft
+    await new Promise((resolve, reject) => {
+      const interval = setInterval(async () => {
+        try {
+          const statusRes = await fetch(`https://api.pandadoc.com/public/v1/documents/${id}`, {
+            headers: { 'Authorization': `API-Key ${PANDADOC_API_KEY}` },
+          })
+          const statusData = await statusRes.json()
+          if (statusData.status === 'document.draft') {
+            clearInterval(interval)
+            resolve()
+          }
+        } catch (err) {
+          clearInterval(interval)
+          reject(err)
+        }
+      }, 100)
+    })
+
+    // Send document
+    const sendRes = await fetch(`https://api.pandadoc.com/public/v1/documents/${id}/send`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `API-Key ${PANDADOC_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        message: 'Hello!',
+        subject: 'Please find our more ROI info',
+      }),
+    })
+    const sendData = await sendRes.json()
+    res.status(sendRes.status).json(sendData)
   } catch (err) {
-    res.status(500).json({ error: 'Failed to create document' })
+    res.status(500).json({ error: 'Failed to create and send document' })
   }
 })
 
