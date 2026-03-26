@@ -32,6 +32,71 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
   )
 }
 
+const SLIDER_CONFIG = [
+  { key: 'Num_CurrentTimeToCreate',      label: 'Current mins to create a doc', min: 1, max: 240 },
+  { key: 'Num_TimeToCreateWithPandaDoc', label: 'Mins to create a doc with PandaDoc', min: 1, max: 120 },
+  { key: 'Num_QuotesPerMonth',           label: 'Quotes per month', min: 1, max: 1000 },
+  { key: 'Num_TeamMembers',              label: 'Team members', min: 1, max: 500 },
+]
+
+function FilterPanel({ filters, onSave }) {
+  const [draft, setDraft] = useState(filters)
+  const [open, setOpen] = useState(false)
+
+  function handleSave() {
+    onSave(draft)
+    setOpen(false)
+  }
+
+  return (
+    <>
+      <button className="filter-toggle" onClick={() => { setDraft(filters); setOpen(o => !o) }}>
+        {open ? '✕' : '⚙ Filters'}
+      </button>
+      <div className={`filter-panel${open ? ' open' : ''}`}>
+        <h2 className="filter-title">Edit Filters</h2>
+        {SLIDER_CONFIG.map(({ key, label, min, max }) => (
+          <div key={key} className="filter-row">
+            <label className="filter-label">{label}</label>
+            <div className="filter-slider-row">
+              <input
+                type="range"
+                min={min}
+                max={max}
+                value={draft[key] ?? min}
+                onChange={e => setDraft(d => ({ ...d, [key]: Number(e.target.value) }))}
+              />
+              <span className="filter-value">{draft[key] ?? min}</span>
+            </div>
+          </div>
+        ))}
+        <button className="filter-save" onClick={handleSave}>Save</button>
+      </div>
+    </>
+  )
+}
+
+function DashboardPage({ nums }) {
+  const [filters, setFilters] = useState({
+    Num_CurrentTimeToCreate:      nums.Num_CurrentTimeToCreate      || 0,
+    Num_TimeToCreateWithPandaDoc: nums.Num_TimeToCreateWithPandaDoc || 5,
+    Num_QuotesPerMonth:           nums.Num_QuotesPerMonth           || 0,
+    Num_TeamMembers:              nums.Num_TeamMembers              || 1,
+  })
+
+  return (
+    <div className="dashboard-page">
+      <FilterPanel filters={filters} onSave={setFilters} />
+      <ROIDashboard
+        minsWithout={filters.Num_CurrentTimeToCreate}
+        minsWith={filters.Num_TimeToCreateWithPandaDoc}
+        quotesPerMonth={filters.Num_QuotesPerMonth}
+        teamMembers={filters.Num_TeamMembers}
+      />
+    </div>
+  )
+}
+
 function CompilingPage({ tokens }) {
   const [done, setDone] = useState(false)
 
@@ -44,14 +109,7 @@ function CompilingPage({ tokens }) {
     const nums = Object.fromEntries(
       Object.entries(tokens).map(([k, v]) => [k, k.startsWith('Num_') ? Number(v) : v])
     )
-    return (
-      <ROIDashboard
-        minsWithout={nums.Num_CurrentTimeToCreate || 0}
-        minsWith={nums.Num_TimeToCreateWithPandaDoc || 5}
-        quotesPerMonth={nums.Num_QuotesPerMonth || 0}
-        teamMembers={nums.Num_TeamMembers || 1}
-      />
-    )
+    return <DashboardPage nums={nums} />
   }
 
   return (
