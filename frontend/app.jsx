@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import './app.css'
 
-function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1, closeRate = 0, avgOrderValue = 0, currentApprovalTime = 0 }) {
+function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1, closeRate = 0, avgOrderValue = 0, currentApprovalTime = 0, negotiationTime = 0 }) {
   const timeSaved = minsWithout - minsWith
   const timeSavedPerMonth = timeSaved * quotesPerMonth
   const timeSavedPerMemberPerMonth = teamMembers > 0 ? Math.round(timeSavedPerMonth / teamMembers) : 0
@@ -10,6 +10,7 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
   const monthlyRevenue = Math.round((closeRate / 100) * quotesPerMonth * avgOrderValue)
   const projectedWinRate = Math.min(closeRate + (closeRate < 35 ? 15 : 10), 100)
   const monthlyApprovalMins = quotesPerMonth * currentApprovalTime
+  const monthlyRedliningMins = quotesPerMonth * negotiationTime
   const data = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   return (
@@ -36,6 +37,9 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
       <div className="dashboard-stat">
         Monthly time spent on approvals: <span>{monthlyApprovalMins} mins</span>
       </div>
+      <div className="dashboard-stat">
+        Monthly time spent on redlining: <span>{monthlyRedliningMins} mins</span>
+      </div>
       <BarChart width={480} height={320} data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
         <XAxis dataKey="name" />
@@ -56,6 +60,7 @@ const SLIDER_CONFIG = [
   { key: 'PCT_CloseRate',                label: 'Close rate (%)', min: 1, max: 100 },
   { key: 'Num_AvgOrderValue',            label: 'Average order value ($)', min: 1, max: 100000 },
   { key: 'Num_CurrentApprovalTime',      label: 'Current approval time (mins)', min: 1, max: 240 },
+  { key: 'Num_CurrentNegotiationTime',   label: 'Current negotiation time (mins)', min: 1, max: 240 },
 ]
 
 function FilterPanel({ filters, onSave }) {
@@ -104,6 +109,7 @@ function DashboardPage({ nums }) {
     PCT_CloseRate:                nums.PCT_CloseRate                || 0,
     Num_AvgOrderValue:            nums.Num_AvgOrderValue            || 0,
     Num_CurrentApprovalTime:      nums.Num_CurrentApprovalTime      || 0,
+    Num_CurrentNegotiationTime:   nums.Num_CurrentNegotiationTime   || 0,
   })
 
   return (
@@ -117,6 +123,7 @@ function DashboardPage({ nums }) {
         closeRate={filters.PCT_CloseRate}
         avgOrderValue={filters.Num_AvgOrderValue}
         currentApprovalTime={filters.Num_CurrentApprovalTime}
+        negotiationTime={filters.Num_CurrentNegotiationTime}
       />
     </div>
   )
