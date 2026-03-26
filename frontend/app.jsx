@@ -2,13 +2,14 @@ import { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import './app.css'
 
-function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1, closeRate = 0, avgOrderValue = 0 }) {
+function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1, closeRate = 0, avgOrderValue = 0, currentApprovalTime = 0 }) {
   const timeSaved = minsWithout - minsWith
   const timeSavedPerMonth = timeSaved * quotesPerMonth
   const timeSavedPerMemberPerMonth = teamMembers > 0 ? Math.round(timeSavedPerMonth / teamMembers) : 0
   const annualTeamHours = Math.round((minsWithout * quotesPerMonth * 12) / 60)
   const monthlyRevenue = Math.round((closeRate / 100) * quotesPerMonth * avgOrderValue)
   const projectedWinRate = Math.min(closeRate + (closeRate < 35 ? 15 : 10), 100)
+  const monthlyApprovalMins = quotesPerMonth * currentApprovalTime
   const data = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   return (
@@ -32,6 +33,9 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
       <div className="dashboard-stat">
         That's <span>{timeSavedPerMemberPerMonth} minutes</span> saved per team member per month
       </div>
+      <div className="dashboard-stat">
+        Monthly time spent on approvals: <span>{monthlyApprovalMins} mins</span>
+      </div>
       <BarChart width={480} height={320} data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
         <XAxis dataKey="name" />
@@ -51,6 +55,7 @@ const SLIDER_CONFIG = [
   { key: 'Num_TeamMembers',              label: 'Team members', min: 1, max: 500 },
   { key: 'PCT_CloseRate',                label: 'Close rate (%)', min: 1, max: 100 },
   { key: 'Num_AvgOrderValue',            label: 'Average order value ($)', min: 1, max: 100000 },
+  { key: 'Num_CurrentApprovalTime',      label: 'Current approval time (mins)', min: 1, max: 240 },
 ]
 
 function FilterPanel({ filters, onSave }) {
@@ -98,6 +103,7 @@ function DashboardPage({ nums }) {
     Num_TeamMembers:              nums.Num_TeamMembers              || 1,
     PCT_CloseRate:                nums.PCT_CloseRate                || 0,
     Num_AvgOrderValue:            nums.Num_AvgOrderValue            || 0,
+    Num_CurrentApprovalTime:      nums.Num_CurrentApprovalTime      || 0,
   })
 
   return (
@@ -110,6 +116,7 @@ function DashboardPage({ nums }) {
         teamMembers={filters.Num_TeamMembers}
         closeRate={filters.PCT_CloseRate}
         avgOrderValue={filters.Num_AvgOrderValue}
+        currentApprovalTime={filters.Num_CurrentApprovalTime}
       />
     </div>
   )
