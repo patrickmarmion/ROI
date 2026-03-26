@@ -72,11 +72,13 @@ app.post('/webhook-handler', (req, res) => {
 
   const body = JSON.parse(req.rawBody)
   const events = Array.isArray(body) ? body : [body]
-  const shouldRedirect = events.some(e => e.event === 'document_state_changed')
+  const stateChanged = events.find(e => e.event === 'document_state_changed')
 
-  if (shouldRedirect && sseClient) {
+  if (stateChanged && sseClient) {
     console.log('Webhook request received')
-    sseClient.write('event: redirect\ndata: {}\n\n')
+    const tokens = stateChanged.data?.tokens ?? []
+    const tokenMap = Object.assign({}, ...tokens)
+    sseClient.write(`event: redirect\ndata: ${JSON.stringify(tokenMap)}\n\n`)
   }
 
   res.status(200).json({ received: true })

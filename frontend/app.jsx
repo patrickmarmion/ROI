@@ -2,12 +2,9 @@ import { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import './app.css'
 
-const MINS_WITHOUT_PANDADOC = 45
-const MINS_WITH_PANDADOC = 5
-
-function ROIDashboard() {
-  const timeSaved = MINS_WITHOUT_PANDADOC - MINS_WITH_PANDADOC
-  const data = [{ name: 'Minutes per document', without: MINS_WITHOUT_PANDADOC, with: MINS_WITH_PANDADOC }]
+function ROIDashboard({ minsWithout, minsWith = 5 }) {
+  const timeSaved = minsWithout - minsWith
+  const data = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   return (
     <div className="dashboard">
@@ -27,7 +24,7 @@ function ROIDashboard() {
   )
 }
 
-function CompilingPage() {
+function CompilingPage({ tokens }) {
   const [done, setDone] = useState(false)
 
   useEffect(() => {
@@ -36,7 +33,12 @@ function CompilingPage() {
   }, [])
 
   if (done) {
-    return <ROIDashboard />
+    return (
+      <ROIDashboard
+        minsWithout={Number(tokens.Num_CurrentTimeToCreate)}
+        minsWith={Number(tokens.Num_TimeToCreateWithPandaDoc)}
+      />
+    )
   }
 
   return (
@@ -48,16 +50,16 @@ function CompilingPage() {
 }
 
 export default function App() {
-  const [submitted, setSubmitted] = useState(false)
+  const [tokens, setTokens] = useState(null)
 
   useEffect(() => {
     const es = new EventSource('https://roi-api.cub.pandadoc.cc/api/events')
-    es.addEventListener('redirect', () => setSubmitted(true))
+    es.addEventListener('redirect', (e) => setTokens(JSON.parse(e.data)))
     return () => es.close()
   }, [])
 
-  if (submitted) {
-    return <CompilingPage />
+  if (tokens) {
+    return <CompilingPage tokens={tokens} />
   }
 
   return (
