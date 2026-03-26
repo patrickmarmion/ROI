@@ -2,8 +2,9 @@ import { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import './app.css'
 
-function ROIDashboard({ minsWithout, minsWith = 5 }) {
+function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0 }) {
   const timeSaved = minsWithout - minsWith
+  const timeSavedPerMonth = timeSaved * quotesPerMonth
   const data = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   return (
@@ -11,6 +12,9 @@ function ROIDashboard({ minsWithout, minsWith = 5 }) {
       <h1 className="dashboard-title">Your ROI with PandaDoc</h1>
       <div className="dashboard-stat">
         You save <span>{timeSaved} minutes</span> per document
+      </div>
+      <div className="dashboard-stat">
+        That's <span>{timeSavedPerMonth} minutes</span> saved per month
       </div>
       <BarChart width={480} height={320} data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -33,10 +37,14 @@ function CompilingPage({ tokens }) {
   }, [])
 
   if (done) {
+    const nums = Object.fromEntries(
+      Object.entries(tokens).map(([k, v]) => [k, k.startsWith('Num_') ? Number(v) : v])
+    )
     return (
       <ROIDashboard
-        minsWithout={Number(tokens.Num_CurrentTimeToCreate)}
-        minsWith={Number(tokens.Num_TimeToCreateWithPandaDoc)}
+        minsWithout={nums.Num_CurrentTimeToCreate || 0}
+        minsWith={nums.Num_TimeToCreateWithPandaDoc || 5}
+        quotesPerMonth={nums.Num_QuotesPerMonth || 0}
       />
     )
   }
