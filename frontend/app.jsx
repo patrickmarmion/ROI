@@ -63,7 +63,7 @@ export default function App() {
   return (
     <div className="wrapper">
       <div className="iframe-container">
-        <iframe style="width: 100%; height: 500px;" src="https://form.pandadoc.com/form/svcD7RgDpvRxGCwPT4k7YC?mode=embedded" title="ROI Calculator"></iframe>
+        <iframe src="https://form.pandadoc.com/form/svcD7RgDpvRxGCwPT4k7YC?mode=embedded" title="ROI Calculator"></iframe>
       </div>
     </div>
   )
