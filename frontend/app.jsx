@@ -2,6 +2,10 @@ import { useEffect, useState } from 'react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 import './app.css'
 
+async function createDocument() {
+  await fetch('https://roi-api.cub.pandadoc.cc/api/create-document', { method: 'POST' })
+}
+
 function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1, closeRate = 0, avgOrderValue = 0, currentApprovalTime = 0, negotiationTime = 0 }) {
   const timeSaved = minsWithout - minsWith
   const timeSavedPerMonth = timeSaved * quotesPerMonth
@@ -35,10 +39,10 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
         That's <span>{timeSavedPerMemberPerMonth} minutes</span> saved per team member per month
       </div>
       <div className="dashboard-stat">
-        Monthly time spent on approvals: <span>{monthlyApprovalMins} mins</span>
+        Monthly time spent on approvals: <span>{monthlyApprovalMins} hours</span>
       </div>
       <div className="dashboard-stat">
-        Monthly time spent on redlining: <span>{monthlyRedliningMins} mins</span>
+        Monthly time spent on redlining: <span>{monthlyRedliningMins} hours</span>
       </div>
       <BarChart width={480} height={320} data={data} margin={{ top: 20, right: 30, left: 0, bottom: 20 }}>
         <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -48,6 +52,9 @@ function ROIDashboard({ minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembe
         <Bar dataKey="without" name="Without PandaDoc" fill="#cbd5e1" radius={[6, 6, 0, 0]} />
         <Bar dataKey="with" name="With PandaDoc" fill="#3b82f6" radius={[6, 6, 0, 0]} />
       </BarChart>
+      <button className="cta-button" onClick={createDocument}>
+        Receive Further Information
+      </button>
     </div>
   )
 }

@@ -205,3 +205,19 @@
 .filter-save:hover {
   background: #2563eb;
 }
+
+.cta-button {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 14px 28px;
+  font-size: 1rem;
+  font-family: sans-serif;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+.cta-button:hover {
+  background: #2563eb;
+}

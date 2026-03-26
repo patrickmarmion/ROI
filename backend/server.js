@@ -5,6 +5,7 @@ import { createHmac, timingSafeEqual } from 'crypto'
 const app = express()
 const PORT = process.env.PORT || 3002
 const SHARED_KEY = process.env.SHARED_KEY
+const PANDADOC_API_KEY = process.env.PANDADOC_API_KEY
 
 // SSE client for the single connected frontend
 let sseClient = null
@@ -82,6 +83,27 @@ app.post('/webhook-handler', (req, res) => {
   }
 
   res.status(200).json({ received: true })
+})
+
+app.post('/api/create-document', async (_req, res) => {
+  try {
+    const response = await fetch('https://api.pandadoc.com/public/v1/documents', {
+      method: 'POST',
+      headers: {
+        'Authorization': `API-Key ${PANDADOC_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: 'ROI',
+        template_uuid: 'pNVzpQpSnZezkqy7paJFmH',
+        recipients: [],
+      }),
+    })
+    const data = await response.json()
+    res.status(response.status).json(data)
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to create document' })
+  }
 })
 
 app.listen(PORT, () => {
