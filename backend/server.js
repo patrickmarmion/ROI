@@ -74,7 +74,10 @@ app.post('/webhook-handler', (req, res) => {
 
   const body = JSON.parse(req.rawBody)
   const events = Array.isArray(body) ? body : [body]
-  const stateChanged = events.find(e => e.event === 'document_state_changed')
+  const stateChanged = events.find(e =>
+    e.event === 'document_state_changed' &&
+    e.data?.template?.id === 'jZEpYfbRrojYsB4QgHGYhT'
+  )
 
   if (stateChanged && sseClient) {
     console.log('Webhook request received')
