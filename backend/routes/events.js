@@ -1,5 +1,6 @@
 import { Router } from 'express'
-import { setSseClient } from '../state.js'
+import { randomBytes } from 'crypto'
+import { setSseClient, setSessionToken } from '../state.js'
 
 const router = Router()
 
@@ -11,8 +12,16 @@ router.get('/events', (req, res) => {
   })
   res.flushHeaders()
 
+  const token = randomBytes(32).toString('hex')
+  setSessionToken(token)
   setSseClient(res)
-  req.on('close', () => setSseClient(null))
+
+  res.write(`event: init\ndata: ${JSON.stringify({ sessionToken: token })}\n\n`)
+
+  req.on('close', () => {
+    setSseClient(null)
+    setSessionToken(null)
+  })
 })
 
 export default router

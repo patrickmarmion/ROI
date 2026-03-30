@@ -4,15 +4,17 @@ import './App.css'
 
 export default function App() {
   const [tokens, setTokens] = useState(null)
+  const [sessionToken, setSessionToken] = useState(null)
 
   useEffect(() => {
     const es = new EventSource(`${import.meta.env.VITE_API_BASE ?? ''}/api/events`)
+    es.addEventListener('init', (e) => setSessionToken(JSON.parse(e.data).sessionToken))
     es.addEventListener('redirect', (e) => setTokens(JSON.parse(e.data)))
     return () => es.close()
   }, [])
 
   if (tokens) {
-    return <CompilingPage tokens={tokens} />
+    return <CompilingPage tokens={tokens} sessionToken={sessionToken} />
   }
 
   return (

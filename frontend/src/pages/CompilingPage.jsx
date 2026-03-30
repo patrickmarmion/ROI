@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import DashboardPage from './DashboardPage.jsx'
 
-export default function CompilingPage({ tokens }) {
+export default function CompilingPage({ tokens, sessionToken }) {
   const [done, setDone] = useState(false)
 
   useEffect(() => {
@@ -13,7 +13,7 @@ export default function CompilingPage({ tokens }) {
     const nums = Object.fromEntries(
       Object.entries(tokens).map(([k, v]) => [k, k.startsWith('Num_') || k.startsWith('PCT_') ? Number(v) : v])
     )
-    return <DashboardPage nums={nums} />
+    return <DashboardPage nums={nums} sessionToken={sessionToken} />
   }
 
   return (

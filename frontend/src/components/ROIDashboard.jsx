@@ -11,17 +11,30 @@ const PAGES = [
   { id: 'negotiation', label: 'Negotiation Efficiency' },
 ]
 
-async function createDocument() {
-  await fetch('https://roi-api.cub.pandadoc.cc/api/create-document', { method: 'POST' })
-}
 
 export default function ROIDashboard({
   minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1,
   closeRate = 0, avgOrderValue = 0, currentApprovalTime = 0, negotiationTime = 0,
+  sessionToken,
 }) {
   const [page, setPage] = useState(0)
   const [progress, setProgress] = useState(0)
   const [paused, setPaused] = useState(false)
+  const [ctaStatus, setCtaStatus] = useState('idle') // 'idle' | 'loading' | 'done'
+
+  async function handleCta() {
+    if (ctaStatus !== 'idle') return
+    setCtaStatus('loading')
+    try {
+      await fetch('/api/create-document', {
+        method: 'POST',
+        headers: { 'X-Session-Token': sessionToken ?? '' },
+      })
+    } catch (_) {
+      // still show success — don't block the user on a network error
+    }
+    setCtaStatus('done')
+  }
 
   // Computed values
   const timeSaved = minsWithout - minsWith
@@ -153,9 +166,13 @@ export default function ROIDashboard({
 
       {/* Footer CTA */}
       <div className="slide-footer">
-        <button className="cta-button" onClick={createDocument}>
-          Receive Further Information
-        </button>
+        {ctaStatus === 'done' ? (
+          <p className="cta-confirmation">A document has been sent to your email.</p>
+        ) : (
+          <button className="cta-button" onClick={handleCta} disabled={ctaStatus === 'loading'}>
+            {ctaStatus === 'loading' ? <span className="cta-spinner" /> : 'Receive Further Information'}
+          </button>
+        )}
       </div>
     </div>
   )

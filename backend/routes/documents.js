@@ -1,10 +1,21 @@
 import { Router } from 'express'
-import { lastRecipient } from '../state.js'
+import { timingSafeEqual } from 'crypto'
+import { lastRecipient, sessionToken } from '../state.js'
 
 const router = Router()
 const PANDADOC_API_KEY = process.env.PANDADOC_API_KEY
 
-router.post('/create-document', async (_req, res) => {
+router.post('/create-document', async (req, res) => {
+  const provided = req.headers['x-session-token']
+  if (!provided || !sessionToken) {
+    return res.status(401).json({ error: 'Unauthorised' })
+  }
+  try {
+    const valid = timingSafeEqual(Buffer.from(provided), Buffer.from(sessionToken))
+    if (!valid) return res.status(401).json({ error: 'Unauthorised' })
+  } catch {
+    return res.status(401).json({ error: 'Unauthorised' })
+  }
   try {
     const createRes = await fetch('https://api.pandadoc.com/public/v1/documents', {
       method: 'POST',

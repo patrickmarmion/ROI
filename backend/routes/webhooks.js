@@ -5,23 +5,17 @@ import { sseClient, setLastRecipient } from '../state.js'
 const router = Router()
 
 router.post('/webhook-handler', (req, res) => {
-  console.log('Webhook hit received')
   const receivedSignature = req.query.signature
   if (!receivedSignature) {
     return res.status(400).json({ error: 'Missing signature' })
   }
 
   const SHARED_KEY = process.env.SHARED_KEY
-  console.log('SHARED_KEY set:', !!SHARED_KEY)
-  console.log('Received signature length:', receivedSignature.length)
-  console.log('Raw body length:', req.rawBody?.length)
 
   try {
     const hmac = createHmac('sha256', SHARED_KEY)
     hmac.update(req.rawBody)
     const expectedSignature = hmac.digest('hex')
-
-    console.log('Expected signature length:', expectedSignature.length)
 
     const valid = timingSafeEqual(
       Buffer.from(expectedSignature, 'hex'),
@@ -44,7 +38,6 @@ router.post('/webhook-handler', (req, res) => {
   )
 
   if (stateChanged && sseClient) {
-    console.log('Webhook request received')
     const tokens = stateChanged.data?.tokens ?? []
     const tokenMap = Object.assign({}, ...tokens)
 

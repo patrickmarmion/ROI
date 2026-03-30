@@ -2,7 +2,7 @@ import { useState } from 'react'
 import ROIDashboard from '../components/ROIDashboard.jsx'
 import FilterPanel from '../components/FilterPanel.jsx'
 
-export default function DashboardPage({ nums }) {
+export default function DashboardPage({ nums, sessionToken }) {
   const [filters, setFilters] = useState({
     Num_CurrentTimeToCreate:      nums.Num_CurrentTimeToCreate      || 0,
     Num_TimeToCreateWithPandaDoc: nums.Num_TimeToCreateWithPandaDoc || 5,
@@ -26,6 +26,7 @@ export default function DashboardPage({ nums }) {
         avgOrderValue={filters.Num_AvgOrderValue}
         currentApprovalTime={filters.Num_CurrentApprovalTime}
         negotiationTime={filters.Num_CurrentNegotiationTime}
+        sessionToken={sessionToken}
       />
     </div>
   )

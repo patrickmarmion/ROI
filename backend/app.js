@@ -1,5 +1,6 @@
 import express from 'express'
 import cors from 'cors'
+import rateLimit from 'express-rate-limit'
 import eventsRouter from './routes/events.js'
 import webhooksRouter from './routes/webhooks.js'
 import documentsRouter from './routes/documents.js'
@@ -7,7 +8,19 @@ import simulateRouter from './routes/simulate.js'
 
 const app = express()
 
-app.use(cors())
+const allowedOrigin = process.env.ALLOWED_ORIGIN
+if (!allowedOrigin) {
+  console.warn('Warning: ALLOWED_ORIGIN is not set — CORS will block all browser requests')
+}
+app.use(cors({ origin: allowedOrigin }))
+
+const createDocumentLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000, // 1 hour
+  max: 5,
+  message: { error: 'Document already requested' },
+  standardHeaders: true,
+  legacyHeaders: false,
+})
 
 // Capture raw body for webhook signature verification before JSON parsing
 app.use((req, res, next) => {
@@ -24,6 +37,7 @@ app.use((req, res, next) => {
 })
 
 app.use('/api', eventsRouter)
+app.use('/api/create-document', createDocumentLimiter)
 app.use('/api', documentsRouter)
 app.use(webhooksRouter)
 
