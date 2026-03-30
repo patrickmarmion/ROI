@@ -21,6 +21,7 @@ export default function ROIDashboard({
 }) {
   const [page, setPage] = useState(0)
   const [progress, setProgress] = useState(0)
+  const [paused, setPaused] = useState(false)
 
   // Computed values
   const timeSaved = minsWithout - minsWith
@@ -34,6 +35,7 @@ export default function ROIDashboard({
   const chartData = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   useEffect(() => {
+    if (paused) return
     setProgress(0)
     const start = Date.now()
     let advanced = false
@@ -48,7 +50,7 @@ export default function ROIDashboard({
     }, 50)
 
     return () => clearInterval(timer)
-  }, [page])
+  }, [page, paused])
 
   const goToPage = (i) => setPage(i)
 
@@ -58,6 +60,11 @@ export default function ROIDashboard({
       <div className="slide-progress">
         <div className="slide-progress-fill" style={{ width: `${progress}%` }} />
       </div>
+
+      {/* Pause button */}
+      <button className="pause-button" onClick={() => setPaused(p => !p)} title={paused ? 'Resume' : 'Pause'}>
+        {paused ? '▶' : '⏸'}
+      </button>
 
       {/* Slide content */}
       <div className="slide-content">

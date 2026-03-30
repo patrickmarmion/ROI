@@ -95,6 +95,27 @@
   transition: width 0.05s linear;
 }
 
+/* Pause button */
+.pause-button {
+  position: fixed;
+  top: 16px;
+  right: 20px;
+  z-index: 200;
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 1rem;
+  color: #718096;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.pause-button:hover {
+  background: #f0f4f8;
+  color: #1a202c;
+}
+
 /* Tab navigation */
 .slide-tabs {
   display: flex;
