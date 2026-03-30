@@ -33,6 +33,11 @@ router.post('/create-document', async (req, res) => {
     const id = doc.id
 
     await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => {
+        clearInterval(interval)
+        reject(new Error('Timed out waiting for document to reach draft status'))
+      }, 20_000)
+
       const interval = setInterval(async () => {
         try {
           const statusRes = await fetch(`https://api.pandadoc.com/public/v1/documents/${id}`, {
@@ -41,10 +46,12 @@ router.post('/create-document', async (req, res) => {
           const statusData = await statusRes.json()
           if (statusData.status === 'document.draft') {
             clearInterval(interval)
+            clearTimeout(timeout)
             resolve()
           }
         } catch (err) {
           clearInterval(interval)
+          clearTimeout(timeout)
           reject(err)
         }
       }, 100)

@@ -26,8 +26,15 @@ const createDocumentLimiter = rateLimit({
 app.use((req, res, next) => {
   if (req.path === '/webhook-handler') {
     let raw = ''
-    req.on('data', chunk => { raw += chunk })
+    req.on('data', chunk => {
+      raw += chunk
+      if (raw.length > 10_000_000) {
+        raw = ''
+        res.status(413).send('Too large')
+      }
+    })
     req.on('end', () => {
+      if (res.headersSent) return
       req.rawBody = raw
       next()
     })
