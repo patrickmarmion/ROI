@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:sandbox": "vite --config vite.config.sandbox.js",
     "build": "vite build",
     "preview": "vite preview",
     "start": "npx serve dist -l 3000"

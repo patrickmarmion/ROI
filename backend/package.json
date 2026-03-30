@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "dev": "node --env-file=.env --watch server.js"
+    "dev": "node --env-file=.env --watch server.js",
+    "dev:sandbox": "node --env-file=.env.sandbox --watch server.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
