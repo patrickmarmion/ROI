@@ -41,6 +41,7 @@ export default function ROIDashboard({
   const timeSavedPerMonth = timeSaved * quotesPerMonth
   const timeSavedPerMemberPerMonth = teamMembers > 0 ? Math.round(timeSavedPerMonth / teamMembers) : 0
   const annualTeamHours = Math.round((minsWithout * quotesPerMonth * 12) / 60)
+  const monthlyQuotingMins = minsWithout * quotesPerMonth
   const monthlyRevenue = Math.round((closeRate / 100) * quotesPerMonth * avgOrderValue)
   const projectedWinRate = Math.min(closeRate + (closeRate < 35 ? 15 : 10), 100)
   const monthlyApprovalHours = Math.round(quotesPerMonth * currentApprovalTime)
@@ -87,12 +88,15 @@ export default function ROIDashboard({
           <div className="slide">
             <h2 className="slide-title">{company ? `Where ${company} Stands Today` : 'Where You Stand Today'}</h2>
             <div className="stat-grid">
-              <StatCard label="Hours/year on quoting" value={`${annualTeamHours}h`} />
-              <StatCard label="Monthly quoting revenue" value={`$${monthlyRevenue.toLocaleString()}`} />
-              <StatCard label="Current close rate" value={`${closeRate}%`} />
-              <StatCard label="Quotes per month" value={quotesPerMonth} />
-              <StatCard label="Team size" value={teamMembers} />
-              <StatCard label="Avg order value" value={`$${Number(avgOrderValue).toLocaleString()}`} />
+              <StatCard label="Hours Per Year Spent on Quoting" value={annualTeamHours} />
+              <StatCard label="Monthly Revenue From Quoting" value={`$${monthlyRevenue.toLocaleString()}`} />
+              <StatCard label="Current Close Rate" value={`${closeRate}%`} />
+              <StatCard label="Quotes Per Month" value={quotesPerMonth} />
+              <StatCard label="Team Size" value={teamMembers} />
+              <StatCard label="Average Order Value" value={`$${Number(avgOrderValue).toLocaleString()}`} />
+              <StatCard label="Monthly Team Mins on Quoting" value={monthlyQuotingMins} />
+              <StatCard label="Monthly Approval Hours (Team)" value={monthlyApprovalHours} />
+              <StatCard label="Monthly Redline Hours (Team)" value={monthlyRedliningHours} />
             </div>
           </div>
         )}
