@@ -46,7 +46,11 @@ export default function ROIDashboard({
   const projectedWinRate = Math.min(closeRate + (closeRate < 35 ? 15 : 10), 100)
   const monthlyApprovalHours = Math.round(quotesPerMonth * currentApprovalTime)
   const monthlyRedliningHours = Math.round(quotesPerMonth * negotiationTime)
-  const chartData = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
+  const chartData = [
+    { name: 'Current', value: minsWithout },
+    { name: 'Using PandaDoc', value: minsWith },
+  ]
+  const BAR_FILLS = ['#cbd5e1', '#3b82f6']
 
   useEffect(() => {
     if (paused) return
@@ -94,7 +98,7 @@ export default function ROIDashboard({
               <StatCard label="Quotes Per Month" value={quotesPerMonth} />
               <StatCard label="Team Size" value={teamMembers} />
               <StatCard label="Average Order Value" value={`$${Number(avgOrderValue).toLocaleString()}`} />
-              <StatCard label="Monthly Team Mins on Quoting" value={monthlyQuotingMins} />
+              <StatCard label="Monthly Team Minutes on Quoting" value={monthlyQuotingMins} />
               <StatCard label="Monthly Approval Hours (Team)" value={monthlyApprovalHours} />
               <StatCard label="Monthly Redline Hours (Team)" value={monthlyRedliningHours} />
             </div>
@@ -106,18 +110,23 @@ export default function ROIDashboard({
           <div className="slide">
             <h2 className="slide-title">Time You'll Get Back</h2>
             <div className="stat-row">
-              <StatCard label="Saved per document" value={`${timeSaved} min`} large />
-              <StatCard label="Saved per month" value={`${timeSavedPerMonth} min`} large />
-              <StatCard label="Per team member / month" value={`${timeSavedPerMemberPerMonth} min`} large />
+              <StatCard label="Minutes Saved Per Document" value={timeSaved} large />
+              <StatCard label="Minutes Saved Per Month" value={timeSavedPerMonth} large />
+              <StatCard label="Minutes Saved Per Team Member Per Month" value={timeSavedPerMemberPerMonth} large />
             </div>
             <BarChart width={460} height={240} data={chartData} margin={{ top: 8, right: 24, left: 0, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
               <XAxis dataKey="name" />
               <YAxis unit=" min" />
               <Tooltip formatter={(v) => `${v} mins`} />
-              <Bar dataKey="without" name="Without PandaDoc" fill="#cbd5e1" radius={[6, 6, 0, 0]} />
-              <Bar dataKey="with" name="With PandaDoc" fill="#3b82f6" radius={[6, 6, 0, 0]} />
+              <Bar
+                dataKey="value"
+                shape={({ x, y, width, height, index }) => (
+                  <rect x={x} y={y} width={width} height={Math.max(0, height)} fill={BAR_FILLS[index]} rx={6} ry={6} />
+                )}
+              />
             </BarChart>
+            <p className="chart-title">Time to Create A Document</p>
           </div>
         )}
 

@@ -232,6 +232,15 @@
   border-top: 1px solid #e2e8f0;
 }
 
+/* Chart title */
+.chart-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1a202c;
+  text-align: center;
+  margin-top: -20px;
+}
+
 /* Insight text */
 .slide-insight {
   font-size: 1rem;
