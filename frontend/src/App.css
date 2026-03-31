@@ -162,7 +162,11 @@
   align-items: center;
   gap: 32px;
   width: 100%;
-  max-width: 680px;
+  max-width: 820px;
+}
+
+.stat-row .stat-card {
+  max-width: 280px;
 }
 
 .slide-title {

@@ -112,7 +112,7 @@ export default function ROIDashboard({
         {page === 1 && (
           <div className="slide">
             <h2 className="slide-title">Time You'll Get Back</h2>
-            <div className="stat-row">
+            <div className="stat-grid">
               <StatCard label="Minutes Saved Per Document" value={timeSaved} large />
               <StatCard label="Minutes Saved Per Team Member Per Month" value={timeSavedPerMemberPerMonth} large />
               <StatCard
@@ -120,6 +120,8 @@ export default function ROIDashboard({
                 value={timeSavedPerMonth >= MIN_MINS_BEFORE_HOURS ? Math.round(timeSavedPerMonth / 60) : timeSavedPerMonth}
                 large
               />
+            </div>
+            <div className="stat-row">
               <StatCard label="Hours Saved Per Year" value={hoursSavedPerYear} large />
               <StatCard label="Value Of Time Saved" value={`$${approxValueOfTimeSaved.toLocaleString()}`} large />
             </div>
