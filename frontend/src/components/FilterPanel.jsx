@@ -8,6 +8,7 @@ const SLIDER_CONFIG = [
   { key: 'Num_AvgOrderValue',            label: 'Average Deal Value ($)', min: 1, max: 100000 },
   { key: 'Num_CurrentApprovalTime',      label: 'Current Approval Time Per Document (hours)', min: 1, max: 240 },
   { key: 'Num_CurrentNegotiationTime',   label: 'Current Negotiation Time Per Document (hours)', min: 1, max: 240 },
+  { key: 'Num_AvgHourlySalary',          label: 'Average Sales Rep Hourly Salary ($)', min: 1, max: 500 },
 ]
 
 export default function FilterPanel({ filters, onSave }) {

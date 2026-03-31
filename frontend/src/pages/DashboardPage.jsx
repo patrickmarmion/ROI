@@ -12,6 +12,7 @@ export default function DashboardPage({ nums, sessionToken }) {
     Num_AvgOrderValue:            nums.Num_AvgOrderValue            || 0,
     Num_CurrentApprovalTime:      nums.Num_CurrentApprovalTime      || 0,
     Num_CurrentNegotiationTime:   nums.Num_CurrentNegotiationTime   || 0,
+    Num_AvgHourlySalary:          nums.Num_AvgHourlySalary          || 0,
   })
 
   return (
@@ -27,6 +28,7 @@ export default function DashboardPage({ nums, sessionToken }) {
         avgOrderValue={filters.Num_AvgOrderValue}
         currentApprovalTime={filters.Num_CurrentApprovalTime}
         negotiationTime={filters.Num_CurrentNegotiationTime}
+        avgHourlySalary={filters.Num_AvgHourlySalary}
         sessionToken={sessionToken}
       />
     </div>

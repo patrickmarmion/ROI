@@ -3,6 +3,7 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 
 const SLIDE_DURATION = 15000
 const PAGE_COUNT = 4
+const MIN_MINS_BEFORE_HOURS = 1200
 
 const PAGES = [
   { id: 'current',     label: 'Current State' },
@@ -15,7 +16,7 @@ const PAGES = [
 export default function ROIDashboard({
   company, minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1,
   closeRate = 0, avgOrderValue = 0, currentApprovalTime = 0, negotiationTime = 0,
-  sessionToken,
+  avgHourlySalary = 0, sessionToken,
 }) {
   const [page, setPage] = useState(0)
   const [progress, setProgress] = useState(0)
@@ -40,6 +41,8 @@ export default function ROIDashboard({
   const timeSaved = minsWithout - minsWith
   const timeSavedPerMonth = timeSaved * quotesPerMonth
   const timeSavedPerMemberPerMonth = teamMembers > 0 ? Math.round(timeSavedPerMonth / teamMembers) : 0
+  const hoursSavedPerYear = Math.round((timeSavedPerMonth * 12) / 60)
+  const approxValueOfTimeSaved = Math.round(hoursSavedPerYear * avgHourlySalary)
   const annualTeamHours = Math.round((minsWithout * quotesPerMonth * 12) / 60)
   const monthlyQuotingMins = minsWithout * quotesPerMonth
   const monthlyRevenue = Math.round((closeRate / 100) * quotesPerMonth * avgOrderValue)
@@ -111,8 +114,14 @@ export default function ROIDashboard({
             <h2 className="slide-title">Time You'll Get Back</h2>
             <div className="stat-row">
               <StatCard label="Minutes Saved Per Document" value={timeSaved} large />
-              <StatCard label="Minutes Saved Per Month" value={timeSavedPerMonth} large />
               <StatCard label="Minutes Saved Per Team Member Per Month" value={timeSavedPerMemberPerMonth} large />
+              <StatCard
+                label={timeSavedPerMonth >= MIN_MINS_BEFORE_HOURS ? 'Hours Saved Per Month' : 'Minutes Saved Per Month'}
+                value={timeSavedPerMonth >= MIN_MINS_BEFORE_HOURS ? Math.round(timeSavedPerMonth / 60) : timeSavedPerMonth}
+                large
+              />
+              <StatCard label="Hours Saved Per Year" value={hoursSavedPerYear} large />
+              <StatCard label="Value Of Time Saved" value={`$${approxValueOfTimeSaved.toLocaleString()}`} large />
             </div>
             <BarChart width={460} height={240} data={chartData} margin={{ top: 8, right: 24, left: 0, bottom: 8 }}>
               <CartesianGrid strokeDasharray="3 3" vertical={false} />
@@ -135,9 +144,9 @@ export default function ROIDashboard({
           <div className="slide">
             <h2 className="slide-title">Streamline Approvals</h2>
             <div className="stat-row">
-              <StatCard label="Monthly approval time" value={`${monthlyApprovalHours}h`} large />
-              <StatCard label="Quotes needing approval / month" value={quotesPerMonth} large />
-              <StatCard label="Time per approval today" value={`${currentApprovalTime} min`} large />
+              <StatCard label="Monthly Approval Hours" value={monthlyApprovalHours} large />
+              <StatCard label="Quotes Needing Approval Per Month" value={quotesPerMonth} large />
+              <StatCard label="Time Per Approval Today (Hours)" value={currentApprovalTime} large />
             </div>
             <p className="slide-insight">
               PandaDoc's automated approval workflows eliminate manual chasing — approvals
@@ -152,9 +161,9 @@ export default function ROIDashboard({
           <div className="slide">
             <h2 className="slide-title">Close Deals Faster</h2>
             <div className="stat-row">
-              <StatCard label="Monthly redlining time" value={`${monthlyRedliningHours}h`} large />
-              <StatCard label="Current win rate" value={`${closeRate}%`} large />
-              <StatCard label="Projected win rate" value={`${projectedWinRate}%`} large accent />
+              <StatCard label="Monthly Redlining Hours" value={monthlyRedliningHours} large />
+              <StatCard label="Current Win Rate (%)" value={closeRate} large />
+              <StatCard label="Projected Win Rate (%)" value={projectedWinRate} large accent />
             </div>
             <p className="slide-insight">
               Smart redlining and e-signatures reduce negotiation cycles — lifting your close
