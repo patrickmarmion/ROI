@@ -18,6 +18,7 @@ export default function DashboardPage({ nums, sessionToken }) {
     <div className="dashboard-page">
       <FilterPanel filters={filters} onSave={setFilters} />
       <ROIDashboard
+        company={nums['Client.Company']}
         minsWithout={filters.Num_CurrentTimeToCreate}
         minsWith={filters.Num_TimeToCreateWithPandaDoc}
         quotesPerMonth={filters.Num_QuotesPerMonth}

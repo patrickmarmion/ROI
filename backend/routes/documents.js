@@ -26,7 +26,7 @@ router.post('/create-document', async (req, res) => {
       body: JSON.stringify({
         name: 'ROI',
         template_uuid: 'pNVzpQpSnZezkqy7paJFmH',
-        recipients: lastRecipient ? [lastRecipient] : [],
+        recipients: lastRecipient ? [Object.fromEntries(Object.entries(lastRecipient).filter(([, v]) => v !== null))] : []
       }),
     })
     const doc = await createRes.json()

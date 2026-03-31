@@ -13,7 +13,7 @@ const PAGES = [
 
 
 export default function ROIDashboard({
-  minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1,
+  company, minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1,
   closeRate = 0, avgOrderValue = 0, currentApprovalTime = 0, negotiationTime = 0,
   sessionToken,
 }) {
@@ -43,8 +43,8 @@ export default function ROIDashboard({
   const annualTeamHours = Math.round((minsWithout * quotesPerMonth * 12) / 60)
   const monthlyRevenue = Math.round((closeRate / 100) * quotesPerMonth * avgOrderValue)
   const projectedWinRate = Math.min(closeRate + (closeRate < 35 ? 15 : 10), 100)
-  const monthlyApprovalHours = Math.round((quotesPerMonth * currentApprovalTime) / 60)
-  const monthlyRedliningHours = Math.round((quotesPerMonth * negotiationTime) / 60)
+  const monthlyApprovalHours = Math.round(quotesPerMonth * currentApprovalTime)
+  const monthlyRedliningHours = Math.round(quotesPerMonth * negotiationTime)
   const chartData = [{ name: 'Minutes per document', without: minsWithout, with: minsWith }]
 
   useEffect(() => {
@@ -85,7 +85,7 @@ export default function ROIDashboard({
         {/* Page 1 — Current State */}
         {page === 0 && (
           <div className="slide">
-            <h2 className="slide-title">Where You Stand Today</h2>
+            <h2 className="slide-title">{company ? `Where ${company} Stands Today` : 'Where You Stand Today'}</h2>
             <div className="stat-grid">
               <StatCard label="Hours/year on quoting" value={`${annualTeamHours}h`} />
               <StatCard label="Monthly quoting revenue" value={`$${monthlyRevenue.toLocaleString()}`} />
@@ -128,7 +128,7 @@ export default function ROIDashboard({
             </div>
             <p className="slide-insight">
               PandaDoc's automated approval workflows eliminate manual chasing — approvals
-              that take <strong>{currentApprovalTime} minutes</strong> today can complete in minutes with
+              that take <strong>{currentApprovalTime} hours</strong> today can complete in minutes with
               built-in routing and instant notifications.
             </p>
           </div>

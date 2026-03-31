@@ -43,7 +43,7 @@ router.post('/webhook-handler', (req, res) => {
 
     const r = stateChanged.data?.recipients?.[0]
     if (r) {
-      setLastRecipient({ email: r.email, first_name: r.first_name, last_name: r.last_name, role: 'Client' })
+      setLastRecipient({ email: r.email, first_name: r.first_name, last_name: r.last_name, company: tokenMap['Client.Company'] ?? null, role: 'Client' })
     }
 
     sseClient.write(`event: redirect\ndata: ${JSON.stringify(tokenMap)}\n\n`)
