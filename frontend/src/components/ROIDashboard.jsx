@@ -4,6 +4,8 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts'
 const SLIDE_DURATION = 15000
 const PAGE_COUNT = 4
 const MIN_MINS_BEFORE_HOURS = 1200
+const PERCENTAGE_TIMESAVINGS = 50
+const DEFAULT_AVG_HOURLY_SALARY = 50
 
 const PAGES = [
   { id: 'current',     label: 'Current State' },
@@ -14,10 +16,12 @@ const PAGES = [
 
 
 export default function ROIDashboard({
-  company, minsWithout, minsWith = 5, quotesPerMonth = 0, teamMembers = 1,
+  company, minsWithout, quotesPerMonth = 0, teamMembers = 1,
   closeRate = 0, avgOrderValue = 0, currentApprovalTime = 0, negotiationTime = 0,
   avgHourlySalary = 0, sessionToken,
 }) {
+  if (!avgHourlySalary) avgHourlySalary = DEFAULT_AVG_HOURLY_SALARY
+  const minsWith = Math.round(minsWithout * (PERCENTAGE_TIMESAVINGS/100))
   const [page, setPage] = useState(0)
   const [progress, setProgress] = useState(0)
   const [paused, setPaused] = useState(false)
@@ -37,7 +41,7 @@ export default function ROIDashboard({
     setCtaStatus('done')
   }
 
-  // Computed values
+  // Formulas values
   const timeSaved = minsWithout - minsWith
   const timeSavedPerMonth = timeSaved * quotesPerMonth
   const timeSavedPerMemberPerMonth = teamMembers > 0 ? Math.round(timeSavedPerMonth / teamMembers) : 0

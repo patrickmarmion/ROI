@@ -5,7 +5,7 @@ import FilterPanel from '../components/FilterPanel.jsx'
 export default function DashboardPage({ nums, sessionToken }) {
   const [filters, setFilters] = useState({
     Num_CurrentTimeToCreate:      nums.Num_CurrentTimeToCreate      || 0,
-    Num_TimeToCreateWithPandaDoc: nums.Num_TimeToCreateWithPandaDoc || 5,
+    //Num_TimeToCreateWithPandaDoc: nums.Num_TimeToCreateWithPandaDoc || 5,
     Num_QuotesPerMonth:           nums.Num_QuotesPerMonth           || 0,
     Num_TeamMembers:              nums.Num_TeamMembers              || 1,
     PCT_CloseRate:                nums.PCT_CloseRate                || 0,
@@ -21,7 +21,7 @@ export default function DashboardPage({ nums, sessionToken }) {
       <ROIDashboard
         company={nums['Client.Company']}
         minsWithout={filters.Num_CurrentTimeToCreate}
-        minsWith={filters.Num_TimeToCreateWithPandaDoc}
+        //minsWith={filters.Num_TimeToCreateWithPandaDoc}
         quotesPerMonth={filters.Num_QuotesPerMonth}
         teamMembers={filters.Num_TeamMembers}
         closeRate={filters.PCT_CloseRate}
