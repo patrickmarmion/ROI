@@ -34,7 +34,7 @@ router.post('/webhook-handler', (req, res) => {
   const events = Array.isArray(body) ? body : [body]
   const stateChanged = events.find(e =>
     e.event === 'document_state_changed' &&
-    e.data?.template?.id === 'jZEpYfbRrojYsB4QgHGYhT'
+    e.data?.template?.id === process.env.TEMPLATE_ID
   )
 
   if (stateChanged && sseClient) {
