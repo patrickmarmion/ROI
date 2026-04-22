@@ -4,7 +4,7 @@ import { sseClient, setLastRecipient } from '../state.js'
 
 const router = Router()
 
-router.post('/webhook-handler', (req, res) => {
+router.post('/webhook', (req, res) => {
   const receivedSignature = req.query.signature
   if (!receivedSignature) {
     return res.status(400).json({ error: 'Missing signature' })

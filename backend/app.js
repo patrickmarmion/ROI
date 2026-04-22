@@ -24,7 +24,7 @@ const createDocumentLimiter = rateLimit({
 
 // Capture raw body for webhook signature verification before JSON parsing
 app.use((req, res, next) => {
-  if (req.path === '/webhook-handler') {
+  if (req.path === '/webhook') {
     let raw = ''
     req.on('data', chunk => {
       raw += chunk
